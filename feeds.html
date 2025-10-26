@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tennis Prasmul - Feeds</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;background:#f5f5f5;display:flex;overflow:hidden}
+    #sidebar-container{flex-shrink:0}
+    .main-container{display:flex;flex:1;height:100vh;overflow:hidden}
+
+    .feeds-container{
+      flex:1;display:flex;flex-direction:column;background:#fff;overflow:hidden;
+    }
+
+    /* ====== NEW: body 2 kolom (Left Rail + konten feeds) ====== */
+    .feeds-body{
+      flex:1;display:flex;min-height:0;background:#fff;
+    }
+
+    /* Left Media Rail — Opsi “Large” */
+    .left-rail{
+      width:140px;                 /* ukuran besar seperti mockup */
+      padding:16px 10px;
+      border-right:1px solid #eee;
+      background:#fff;
+      overflow-y:auto;
+      flex-shrink:0;
+    }
+    .left-rail::-webkit-scrollbar{width:8px}
+    .left-rail::-webkit-scrollbar-thumb{background:#e4e4e4;border-radius:8px}
+
+    .rail-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px;margin-bottom:16px;border-radius:16px;background:#f6f6f6;
+      cursor:pointer;transition:transform .15s,box-shadow .15s,background-color .15s
+    }
+    .rail-item:hover{transform:translateY(-1px);background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+    .rail-thumb{
+      width:112px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0;
+    }
+    .rail-label{display:none;font-size:12px;color:#333} /* set ke block kalau mau tampilkan teks */
+
+    /* Kolom kanan (header + grid feeds) */
+    .feeds-main{
+      flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;
+    }
+
+    .feeds-header{
+      padding:30px 40px;background:#ffffff;border-bottom:1px solid #e0e0e0;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .header-left{display:flex;align-items:center;gap:15px}
+
+    .post-btn{
+      padding:12px 25px;background:#e59d2c;color:#fff;border:none;border-radius:25px;
+      font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;
+      transition:background-color .3s ease
+    }
+    .post-btn:hover{background:#d48b1f}
+    .post-btn svg{width:18px;height:18px;fill:#fff}
+
+
+    .sort-btn{
+      padding:10px 20px;background:transparent;color:#e59d2c;border:none;font-size:15px;font-weight:600;
+      cursor:pointer;display:flex;align-items:center;gap:8px;transition:color .3s ease
+    }
+    .sort-btn:hover{color:#d48b1f}
+    .sort-btn svg{width:20px;height:20px;fill:#e59d2c}
+
+    .feeds-content{padding:30px 40px;flex:1;overflow:auto}
+
+    .feeds-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    }
+    .feed-item{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .2s}
+    .feed-item:hover{transform:scale(1.02)}
+    .feed-image{width:100%;height:100%;object-fit:cover}
+
+    .feed-overlay{
+      position:absolute;top:8px;right:8px;width:35px;height:35px;border-radius:50%;
+      background:rgba(229,157,44,.9);display:flex;align-items:center;justify-content:center;
+    }
+    .feed-overlay svg{width:20px;height:20px;fill:#fff}
+
+    #right-sidebar-container{flex-shrink:0}
+  </style>
+</head>
+<body>
+  <div id="sidebar-container"></div>
+
+  <div class="main-container">
+    <div class="feeds-container">
+      <!-- NEW: dua kolom -->
+      <div class="feeds-body">
+        <!-- LEFT RAIL (Opsi Large) -->
+        <aside class="left-rail">
+          <!-- ganti src sesuai asetmu -->
+          <div class="rail-item"><img class="rail-thumb" src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=600&auto=format&fit=crop" alt=""></div>
+          <div class="rail-item"><img class="rail-thumb" src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=600&auto=format&fit=crop" alt=""></div>
+          <div class="rail-item"><img class="rail-thumb" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=600&auto=format&fit=crop" alt=""></div>
+          <div class="rail-item"><img class="rail-thumb" src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=600&auto=format&fit=crop" alt=""></div>
+          <div class="rail-item"><img class="rail-thumb" src="https://images.unsplash.com/photo-1517495306984-9133a0b411c7?q=80&w=600&auto=format&fit=crop" alt=""></div>
+        </aside>
+
+        <!-- KANAN: header + grid -->
+        <div class="feeds-main">
+          <div class="feeds-header">
+            <div class="header-left">
+              <button class="post-btn" onclick="createPost()">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Post
+              </button>
+            </div>
+            <button class="sort-btn" onclick="sortFeeds()">
+              <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
+              Sort
+            </button>
+          </div>
+
+          <div class="feeds-content">
+            <div class="feeds-grid">
+              <div class="feed-item" onclick="viewPost(1)">
+                <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=400&h=400&fit=crop" alt="Feed 1" class="feed-image">
+                <div class="feed-overlay">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+              </div>
+
+              <div class="feed-item" onclick="viewPost(2)">
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400&h=400&fit=crop" alt="Feed 2" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(3)">
+                <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop" alt="Feed 3" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(4)">
+                <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=400&fit=crop" alt="Feed 4" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(5)">
+                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=400&fit=crop" alt="Feed 5" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(6)">
+                <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=400&fit=crop" alt="Feed 6" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(7)">
+                <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=400&h=400&fit=crop" alt="Feed 7" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(8)">
+                <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=400&h=400&fit=crop" alt="Feed 8" class="feed-image">
+              </div>
+
+              <div class="feed-item" onclick="viewPost(9)">
+                <img src="https://images.unsplash.com/photo-1605236453806-6ff36851218e?w=400&h=400&fit=crop" alt="Feed 9" class="feed-image">
+              </div>
+            </div>
+          </div>
+        </div><!-- /feeds-main -->
+      </div><!-- /feeds-body -->
+    </div>
+
+    <div id="right-sidebar-container"></div>
+  </div>
+
+  <script>
+    // Load sidebars
+    fetch('sidebar.html')
+      .then(r=>r.text()).then(t=>{document.getElementById('sidebar-container').innerHTML=t})
+      .catch(err=>console.error('Failed to load sidebar:',err));
+
+    fetch('right-sidebar.html')
+      .then(r=>r.text()).then(t=>{document.getElementById('right-sidebar-container').innerHTML=t})
+      .catch(err=>console.error('Failed to load right sidebar:',err));
+
+    function createPost(){ alert('Create new post functionality'); }
+    function sortFeeds(){ alert('Sort feeds functionality'); }
+    function viewPost(id){ alert('View post '+id); }
+  </script>
+</body>
+</html>
