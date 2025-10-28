@@ -85,6 +85,35 @@
     .participation-btn.cancel:hover{background:#e0e0e0}
 
     #right-sidebar-container{flex-shrink:0}
+
+    /* ===== Modal Add Event (tambahan) ===== */
+    .modal{
+      display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.35);
+      align-items:center;justify-content:center;padding:24px
+    }
+    .modal-content{
+      width:100%;max-width:560px;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.18);
+      overflow:hidden
+    }
+    .modal-header{
+      display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #eee
+    }
+    .modal-header h2{font-size:18px}
+    .close-modal{
+      font-size:24px;line-height:1;cursor:pointer;padding:4px 8px;border-radius:8px
+    }
+    .close-modal:hover{background:#f5f5f5}
+    .add-btn{
+      padding:8px 16px;border:none;border-radius:10px;background:#e59d2c;color:#fff;font-weight:600;cursor:pointer
+    }
+    .add-btn:hover{background:#d48b1f}
+    .modal-body{padding:18px 20px}
+    .form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+    .form-group label{font-size:13px;color:#333}
+    .form-group input{
+      padding:10px 12px;border:1px solid #e5e5e5;border-radius:10px;font-size:14px;outline:none
+    }
+    .form-group input:focus{border-color:#e59d2c;box-shadow:0 0 0 3px rgba(229,157,44,.15)}
   </style>
 </head>
 <body>
@@ -113,7 +142,6 @@
                 <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
                 Add event
               </button>
-              <!-- avatar bulat D DIHAPUS -->
             </div>
             <button class="sort-btn" onclick="sortEvents()">
               <svg viewBox="0 0 24 24"><path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/></svg>
@@ -193,6 +221,36 @@
     <div id="right-sidebar-container"></div>
   </div>
 
+  <!-- ===== Modal Add Event (ditambahkan) ===== -->
+  <div id="addEventModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2>Add Event</h2>
+        <button class="add-btn" onclick="saveNewEvent()">Add</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Event</label>
+          <input type="text" id="eventName" placeholder="Enter event name">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="eventDate">
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="text" id="eventTime" placeholder="e.g., 10:00 AM - 2:00 PM">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="eventLocation" placeholder="Enter location">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ===== /Modal ===== -->
+
   <script>
     // Load sidebars
     fetch('sidebar.html')
@@ -203,7 +261,48 @@
       .then(r=>r.text()).then(t=>{document.getElementById('right-sidebar-container').innerHTML=t})
       .catch(err=>console.error('Failed to load right sidebar:',err));
 
-    function addEvent(){ alert('Add new event functionality'); }
+    // === Functions dari snippet kamu + integrasi modal ===
+    function addEvent(){ 
+      document.getElementById('addEventModal').style.display='flex';
+    }
+    
+    function closeModal(){
+      document.getElementById('addEventModal').style.display='none';
+      // Clear form
+      document.getElementById('eventName').value='';
+      document.getElementById('eventDate').value='';
+      document.getElementById('eventTime').value='';
+      document.getElementById('eventLocation').value='';
+    }
+    
+    function saveNewEvent(){
+      const name = document.getElementById('eventName').value.trim();
+      const date = document.getElementById('eventDate').value.trim();
+      const time = document.getElementById('eventTime').value.trim();
+      const location = document.getElementById('eventLocation').value.trim();
+      
+      if(!name || !date || !time || !location){
+        alert('Please fill all fields');
+        return;
+      }
+      
+      // Add new row to table (prepend)
+      const tbody = document.querySelector('.event-table tbody');
+      const newRow = tbody.insertRow(0);
+      newRow.innerHTML = `
+        <td><div class="event-name">${name}
+          <span class="edit-icon" onclick="editEvent('new')">
+            <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          </span></div></td>
+        <td class="event-date">${date}</td>
+        <td class="event-time">${time}</td>
+        <td class="event-location">${location}</td>
+        <td><button class="participation-btn join" onclick="toggleParticipation(this)">Join</button></td>
+      `;
+      
+      closeModal();
+    }
+    
     function editEvent(id){ alert('Edit event '+id); }
     function sortEvents(){ alert('Sort events functionality'); }
     function toggleParticipation(button){
@@ -218,6 +317,16 @@
         row.classList.remove('highlighted');
       }
     }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e){
+      const modal = document.getElementById('addEventModal');
+      if (e.target === modal) closeModal();
+    });
+    // Esc to close
+    window.addEventListener('keydown', function(e){
+      if(e.key==='Escape'){ closeModal(); }
+    });
   </script>
 </body>
 </html>
